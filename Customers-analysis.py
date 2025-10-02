@@ -56,7 +56,6 @@ plt.xticks(age_bins)
 plt.grid(axis='y')
 plt.show()
 
-
 #Calculate average age
 average_age = df['Age'].mean()
 #print(f"Average Age: {average_age:.2f} years")
@@ -66,21 +65,48 @@ average_age = df['Age'].mean()
 continent_counts = df['Continent'].value_counts()
 #print("Number of customers by continent:\n", continent_counts)
 
-#Plot: Create a bar chart to visualize customer distribution by continent
-plt.figure(figsize=(10, 6))
-plt.bar(continent_counts.index, continent_counts.values, color='skyblue')
-plt.xlabel('Continent')
-plt.ylabel('Number of Customers')
+#Plot: Create a pie chart  to visualize customer distribution by continent
+plt.figure(figsize=(8, 6))
+plt.pie(continent_counts, labels=continent_counts.index, autopct='%1.1f%%')
 plt.title('Customer Distribution by Continent')
+plt.axis('equal')
+plt.show()
+
+#Count number of customers by country
+country_counts = df['Country'].value_counts().head(10)  # Top 10 countries
+#print("\nTop 10 countries by number of customers:")
+#print(country_counts)
+
+#Plot: Create a bar chart to visualize top 10 countries by number of customers
+plt.figure(figsize=(12, 6))
+plt.bar(country_counts.index, country_counts.values, color='skyblue')
+plt.xlabel('Country')
+plt.ylabel('Number of Customers')
+plt.title('Top 10 Countries by Number of Customers')
 plt.xticks(rotation=45)
-plt.tight_layout()
+plt.grid(axis='y')
+plt.show()
+
+#Count Top 10 Ciities by number of customers in the US
+us_cities = df[df['Country'] == 'United States']['City'].value_counts().head(10)
+#print("\nTop 10 cities in the US by number of customers:")
+#print(us_cities)
+
+#Plot: Create a bar chart to visualize top 10 cities in the US by number of customers
+plt.figure(figsize=(12, 6))
+plt.bar(us_cities.index, us_cities.values, color='lightgreen')
+plt.xlabel('City')
+plt.ylabel('Number of Customers')
+plt.title('Top 10 Cities in the US by Number of Customers')
+plt.xticks(rotation=45)
+plt.grid(axis='y')
 plt.show()
 
 #Count number of customers by gender
 gender_counts = df['Gender'].value_counts()
 gender_counts.index = ['Male' if x else 'Female' for x in gender_counts.index]
-print("\nNumber of customers by gender:")
-print(gender_counts)
+#print("\nNumber of customers by gender:")
+#print(gender_counts)
 
 #Plot: Create a pie chart to visualize gender distribution
 plt.figure(figsize=(8, 6))
