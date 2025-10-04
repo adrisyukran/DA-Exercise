@@ -114,3 +114,4 @@ plt.pie(gender_counts, labels=gender_counts.index, autopct='%1.1f%%')
 plt.title('Customer Gender Distribution')
 plt.axis('equal')
 plt.show()
+
