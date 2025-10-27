@@ -12,7 +12,7 @@ Checklist
 
 #Analysis
 ## General Sales Analysis
-- [] Generate summary of sales channels (online vs offline)
+- [x] Generate summary of sales channels (online vs offline)
 - [] Visualize sales trends over time (monthly/quarterly)
 - [] Brand sales performance VS profit margin (to identify high-performing brands for partnerships or promotions or to invest more in them)
 - [] Which product categories have high profit margins (to focus marketing and sales efforts on high-margin products)
@@ -88,5 +88,24 @@ df["ProfitMargin"] = df["RevenueDifference"] / df["SalesAmount"] * 100
 df["ProfitMargin"] = df["ProfitMargin"].round(2)
 
 
-
 #print(df.head(10))
+
+#--Analysis--##
+#Generate summary of sales channels (online vs offline)
+#Group Sales Channel and calculate total sales and profit margin (If StoreKey=0 then online else offline)
+sales_channel_summary = df. groupby(df['StoreKey'].apply(lambda x: 'Online' if x == 0 else 'Offline')).agg(
+    Total_Sales=('SalesAmount', 'sum'),
+    Average_Profit_Margin=('ProfitMargin', 'mean')
+).reset_index()
+#print(sales_channel_summary)
+
+#Sales trends over time (monthly)
+df['Order Month'] = df['Order Date'].dt.to_period('M')
+monthly_sales_trends = df.groupby('Order Month').agg(
+    Total_Sales=('SalesAmount', 'sum'),
+    Average_Profit_Margin=('ProfitMargin', 'mean')
+).reset_index()
+#Count monthly sales count
+monthly_sales_trends['Sales Count'] = df.groupby('Order Month').size().values
+#print(monthly_sales_trends)
+
