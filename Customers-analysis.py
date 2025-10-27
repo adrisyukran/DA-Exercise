@@ -21,6 +21,8 @@ df['Zip Code'] = pd.to_numeric(df['Zip Code'], errors='coerce').fillna(0).astype
 #Change data type of 'Birthday' to datetime
 df['Birthday'] = pd.to_datetime(df['Birthday'], errors='coerce')
 
+#Export cleaned data to a new CSV file
+df.to_csv('Customers_cleaned.csv', index=False)
 #Check the data types of each column
 #print(df.dtypes)
 
