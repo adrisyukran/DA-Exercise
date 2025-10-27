@@ -109,3 +109,11 @@ monthly_sales_trends = df.groupby('Order Month').agg(
 monthly_sales_trends['Sales Count'] = df.groupby('Order Month').size().values
 #print(monthly_sales_trends)
 
+#Sales trends over time (quarterly)
+quarterly_sales_trends = df.groupby(df['Order Date'].dt.to_period('Q')).agg(
+    Total_Sales=('SalesAmount', 'sum'),
+    Average_Profit_Margin=('ProfitMargin', 'mean')
+).reset_index()
+#Count quarterly sales count
+quarterly_sales_trends ['Sales Count'] = df.groupby(df['Order Date'].dt.to_period('Q')).size().values
+print (quarterly_sales_trends)
