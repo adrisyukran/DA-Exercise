@@ -2,14 +2,12 @@
 Checklist
 
 #Data Prep
-- [] Import csv related to sales data
-- [] Merge all sales data into single df
-- [] Clean data (change dtypes, drop unwanted columns)
-- [] Calculate sales based on qty and product and add as new column
-- [] Calculate profit and add as new column for each product
-- [] Calculate profit margins and add as new column
-- [] Map sales with customer based on ID
-- [] Calculate which store has more sales 
+- [x] Import csv related to sales data
+- [x] Merge all sales data into single df
+- [x] Clean data (change dtypes, drop unwanted columns)
+- [x] Calculate sales based on qty and product and add as new column
+- [x] Calculate profit and add as new column for each product
+- [x] Calculate profit margins and add as new column
 
 
 #Analysis
@@ -33,3 +31,62 @@ Checklist
 - [] For top 5 stores by profit margin, which categories contribute most to their profit and their square ft (to focus on inventory and distribution strategies)
 
 '''
+
+#Import necessary libraries
+import pandas as pd # type: ignore
+import numpy as np # type: ignore
+import matplotlib.pyplot as plt # type: ignore
+
+#Import csv
+sales_table =pd.read_csv('Sales.csv',low_memory=False)
+prod_table = pd.read_csv('Products.csv',low_memory=False)
+store_table = pd.read_csv('Stores.csv',low_memory=False)
+customer_table = pd.read_csv('Customers_cleaned.csv',low_memory=False)
+
+#Merge all sales data into single df
+merged_df = sales_table.merge(prod_table, on='ProductKey', how='left') \
+                       .merge(store_table, on='StoreKey', how='left') \
+                       .merge(customer_table, on='CustomerKey', how='left')
+
+#Drop unwanted columns
+df = merged_df.drop(columns=['Order Number', 'Line Item', 'Delivery Date', 'Currency Code', 'Gender', 'Name','City','State Code',
+                            'Zip Code','Continent','Birthday','Product Name','Color','SubcategoryKey','Subcategory', 'Open Date',
+                            'CustomerKey', 'ProductKey','State_y','Country_y','State_x','CategoryKey'])
+
+#Check the first 5 rows of the dataframe
+#print(df.head(10))
+
+#Check the data types of each column
+#print(df.dtypes)
+
+#Change Data Types
+df['Order Date'] = pd.to_datetime(df['Order Date'], errors='coerce')
+
+#Convert monetary columns to numeric
+cols_to_convert = ["Unit Cost USD", "Unit Price USD"]
+for col in cols_to_convert:
+    #Remove any non-numeric characters (like $) if present
+    df[col] = (
+            df[col]
+            .astype(str)
+            .str.replace(",", "", regex=False)
+            .str.replace("$", "", regex=False)
+        )
+    df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
+
+df['Square Meters'] = pd.to_numeric(df['Square Meters']).fillna(0)
+
+#print(df.dtypes)
+
+
+#Profit Calculation
+df["SalesAmount"] = df["Unit Price USD"] * df["Quantity"]
+df["CostAmount"] = df["Unit Cost USD"] * df["Quantity"]
+df["RevenueDifference"] = df["SalesAmount"] - df["CostAmount"] 
+df["ProfitMargin"] = df["RevenueDifference"] / df["SalesAmount"] * 100 
+#Profit margin in percentage to 2 decimal places
+df["ProfitMargin"] = df["ProfitMargin"].round(2)
+
+
+
+#print(df.head(10))

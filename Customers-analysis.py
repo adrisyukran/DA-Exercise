@@ -1,8 +1,8 @@
 #Import library
 
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
+import pandas as pd # type: ignore
+import numpy as np # type: ignore
+import matplotlib.pyplot as plt # type: ignore
 
 #Import csv file
 df =pd.read_csv('Customers.csv',low_memory=False)
@@ -20,6 +20,10 @@ df['Zip Code'] = pd.to_numeric(df['Zip Code'], errors='coerce').fillna(0).astype
 
 #Change data type of 'Birthday' to datetime
 df['Birthday'] = pd.to_datetime(df['Birthday'], errors='coerce')
+
+#Calculate age from 'Birthday' column
+current_date = pd.to_datetime('today')
+df['Age'] = (current_date - df['Birthday']).dt.days // 365
 
 #Export cleaned data to a new CSV file
 df.to_csv('Customers_cleaned.csv', index=False)
@@ -40,8 +44,8 @@ df['State Code'] = df['State Code'].fillna('NA')
 
 #--Data Analysis--##
 #Calculate age from 'Birthday' column
-current_date = pd.to_datetime('today')
-df['Age'] = (current_date - df['Birthday']).dt.days // 365
+#current_date = pd.to_datetime('today')
+#df['Age'] = (current_date - df['Birthday']).dt.days // 365
 
 #Group ages into bins
 age_bins = [0, 18, 25, 35, 45, 55, 65, 100]
