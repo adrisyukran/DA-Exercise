@@ -13,7 +13,7 @@ Checklist
 #Analysis
 ## General Sales Analysis
 - [x] Generate summary of sales channels (online vs offline)
-- [] Visualize sales trends over time (monthly/quarterly)
+- [x] Visualize sales trends over time (monthly/quarterly)
 - [] Brand sales performance VS profit margin (to identify high-performing brands for partnerships or promotions or to invest more in them)
 - [] Which product categories have high profit margins (to focus marketing and sales efforts on high-margin products)
 - [] What is the correlation between sales volume and profit margin across different product categories (to optimize inventory and marketing strategies)
@@ -116,4 +116,14 @@ quarterly_sales_trends = df.groupby(df['Order Date'].dt.to_period('Q')).agg(
 ).reset_index()
 #Count quarterly sales count
 quarterly_sales_trends ['Sales Count'] = df.groupby(df['Order Date'].dt.to_period('Q')).size().values
-print (quarterly_sales_trends)
+#print (quarterly_sales_trends)
+
+#Brand sales performance VS profit margin (to identify high-performing brands for partnerships or promotions or to invest more in them)
+#Calculate Brand Sales Performance
+brand_sales_performance = df.groupby(['Brand']).agg(Total_Sales=('SalesAmount', 'sum'),Average_Profit_Margin=('ProfitMargin', 'mean')).reset_index()
+brand_sales_performance ['Sales Count'] = df.groupby(['Brand']).size().values #Calculate total sales count
+#Sort the brand sales performance by Profit Margin in descending order
+#brand_sales_performance = df.sort_values(by='ProfitMargin', ascending=False)
+print(brand_sales_performance)
+
+
