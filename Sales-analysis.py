@@ -82,8 +82,8 @@ df['Square Meters'] = pd.to_numeric(df['Square Meters']).fillna(0)
 #Profit Calculation
 df["SalesAmount"] = df["Unit Price USD"] * df["Quantity"]
 df["CostAmount"] = df["Unit Cost USD"] * df["Quantity"]
-df["RevenueDifference"] = df["SalesAmount"] - df["CostAmount"] 
-df["ProfitMargin"] = df["RevenueDifference"] / df["SalesAmount"] * 100 
+df["RevenueDifference"] = df["SalesAmount"] - df["CostAmount"]
+df["ProfitMargin"] = df["RevenueDifference"] / df["SalesAmount"] * 100
 #Profit margin in percentage to 2 decimal places
 df["ProfitMargin"] = df["ProfitMargin"].round(2)
 
@@ -123,7 +123,5 @@ quarterly_sales_trends ['Sales Count'] = df.groupby(df['Order Date'].dt.to_perio
 brand_sales_performance = df.groupby(['Brand']).agg(Total_Sales=('SalesAmount', 'sum'),Average_Profit_Margin=('ProfitMargin', 'mean')).reset_index()
 brand_sales_performance ['Sales Count'] = df.groupby(['Brand']).size().values #Calculate total sales count
 #Sort the brand sales performance by Profit Margin in descending order
-#brand_sales_performance = df.sort_values(by='ProfitMargin', ascending=False)
-print(brand_sales_performance)
-
-
+brand_sales_performance = brand_sales_performance.sort_values(by=['Average_Profit_Margin'], ascending=[False])
+print(brand_sales_performance.head(5)) #Niche Brand
