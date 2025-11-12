@@ -143,3 +143,4 @@ product_categories_profit_margin = product_categories_profit_margin.sort_values(
 top_product_categories_by_sales_count = product_categories_profit_margin.sort_values(by=['Sales Count'], ascending=[False]).head(5)
 #print(top_product_categories_by_sales_count.head(5))
 
+'''What is the correlation between sales volume and profit margin across different product categories (to optimize inventory and marketing strategies)'''
