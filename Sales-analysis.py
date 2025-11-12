@@ -15,7 +15,7 @@ Checklist
 - [x] Generate summary of sales channels (online vs offline)
 - [x] Visualize sales trends over time (monthly/quarterly)
 - [X(KIV)] Brand sales performance VS profit margin (to identify high-performing brands for partnerships or promotions or to invest more in them)
-- [] Which product categories have high profit margins (to focus marketing and sales efforts on high-margin products)
+- [x] Which product categories have high profit margins (to focus marketing and sales efforts on high-margin products)
 - [] What is the correlation between sales volume and profit margin across different product categories (to optimize inventory and marketing strategies)
 ## Customer analysis for Marketing
 - [] what type of customer typically would have a higher percentage of profit margin
@@ -91,7 +91,7 @@ df["ProfitMargin"] = df["ProfitMargin"].round(2)
 #print(df.head(10))
 
 #--Analysis--##
-#Generate summary of sales channels (online vs offline)
+'''Generate summary of sales channels (online vs offline)'''
 #Group Sales Channel and calculate total sales and profit margin (If StoreKey=0 then online else offline)
 sales_channel_summary = df. groupby(df['StoreKey'].apply(lambda x: 'Online' if x == 0 else 'Offline')).agg(
     Total_Sales=('SalesAmount', 'sum'),
@@ -99,6 +99,7 @@ sales_channel_summary = df. groupby(df['StoreKey'].apply(lambda x: 'Online' if x
 ).reset_index()
 #print(sales_channel_summary)
 
+'''Brand sales performance VS profit margin (to identify high-performing brands for partnerships or promotions or to invest more in them)'''
 #Sales trends over time (monthly)
 df['Order Month'] = df['Order Date'].dt.to_period('M')
 monthly_sales_trends = df.groupby('Order Month').agg(
@@ -118,7 +119,7 @@ quarterly_sales_trends = df.groupby(df['Order Date'].dt.to_period('Q')).agg(
 quarterly_sales_trends ['Sales Count'] = df.groupby(df['Order Date'].dt.to_period('Q')).size().values
 #print (quarterly_sales_trends)
 
-#Brand sales performance VS profit margin (to identify high-performing brands for partnerships or promotions or to invest more in them)
+'''Brand sales performance VS profit margin (to identify high-performing brands for partnerships or promotions or to invest more in them)'''
 #Calculate Brand Sales Performance
 brand_sales_performance = df.groupby(['Brand']).agg(Total_Sales=('SalesAmount', 'sum'),Average_Profit_Margin=('ProfitMargin', 'mean')).reset_index()
 brand_sales_performance ['Sales Count'] = df.groupby(['Brand']).size().values #Calculate total sales count
@@ -130,13 +131,15 @@ brand_sales_performance = brand_sales_performance.sort_values(by=['Average_Profi
 top_brands_by_sales_count = brand_sales_performance.sort_values(by=['Sales Count'], ascending=[False]).head(5)
 #print(top_brands_by_sales_count)
 
+'''Which product categories have high profit margins (to focus marketing and sales efforts on high-margin products)? '''
 #Product categories have high profit margin
 product_categories_profit_margin = df.groupby(['Category']).agg(Total_Sales=('SalesAmount', 'sum'),Average_Profit_Margin=('ProfitMargin', 'mean')).reset_index()
 product_categories_profit_margin ['Sales Count'] = df.groupby(['Category']).size().values #Calculate total sales count
 #Sort the product categories by Profit Margin in descending order
 product_categories_profit_margin = product_categories_profit_margin.sort_values(by=['Average_Profit_Margin'], ascending=[False])
-print(product_categories_profit_margin.head(5)) #Electronics
+#print(product_categories_profit_margin.head(5)) #Electronics
 
 #Top 5 product categories by sales count
-#top_categories_by_sales_count = product_categories_profit_margin.sort_values(by=['Sales Count'], ascending=[False]).head(5)
-#print(top_categories_by_sales_count)
+top_product_categories_by_sales_count = product_categories_profit_margin.sort_values(by=['Sales Count'], ascending=[False]).head(5)
+#print(top_product_categories_by_sales_count.head(5))
+
