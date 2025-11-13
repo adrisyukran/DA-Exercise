@@ -18,10 +18,13 @@ Checklist
 - [x] Which product categories have high profit margins (to focus marketing and sales efforts on high-margin products)
 - [KIV] What is the correlation between sales volume and profit margin across different product categories (to optimize inventory and marketing strategies)
 ## Customer analysis for Marketing
-- [] what type of customer typically would have a higher percentage of profit margin
-- [] Top 10% of customer buy product from which channel (offline/online) (to optimize sales channels and marketing strategies)
+- [KIV] what type of customer typically would have a higher percentage of profit margin
+- [x] Top 10% of customer buy product from which channel (offline/online) (to optimize sales channels and marketing strategies)
+- [x] Comparison between top 10% Customer to others/ to determine whether ok or not to invest more towards them
+- [x] Top Categories by top 10% Customers
+- [x] Top Countries by top 10% Customers
+- [x] For top 10% of customers by sales, what is their average profit margin (to identify and target high-value customers for loyalty programs or special offers)
 - [] What seasonal trends exist in sales data (to target marketing campaigns)
-- [] For top 10% of customers by sales, what is their average profit margin (to identify and target high-value customers for loyalty programs or special offers)
 - [] for high profit margin products, what is the typical customer demographic (to tailor marketing strategies to the right audience)
 ## Store Analysis
 - [] distribution of profit margin (by country and regions)
@@ -49,7 +52,7 @@ merged_df = sales_table.merge(prod_table, on='ProductKey', how='left') \
                        .merge(customer_table, on='CustomerKey', how='left')
 
 #Drop unwanted columns
-df = merged_df.drop(columns=['Order Number', 'Line Item', 'Delivery Date', 'Currency Code', 'Gender', 'Name','City','State Code',
+df = merged_df.drop(columns=['Order Number', 'Line Item', 'Delivery Date', 'Currency Code', 'Gender', 'City','State Code',
                             'Zip Code','Continent','Birthday','Product Name','Color','SubcategoryKey','Subcategory', 'Open Date',
                             'ProductKey','State_y','Country_y','State_x','CategoryKey'])
 
@@ -147,11 +150,11 @@ top_product_categories_by_sales_count = product_categories_profit_margin.sort_va
 
 
 ### Customer Analysis
-'''what type of customer typically would have a higher percentage of profit margin'''
+'''$$$$what type of customer typically would have a higher percentage of profit margin'''
 #Sort customer by their profit margin in descending order
 
 
-'''Top 10% of customer buy product from which channel (offline/online) (to optimize sales channels and marketing strategies)'''
+'''$$$$Top 10% of customer buy product from which channel (offline/online) (to optimize sales channels and marketing strategies)'''
 #Find top 10% customer by sales
 # Group by CustomerKey and calculate total sales per customer
 customer_sales = df.groupby('CustomerKey').agg(
@@ -184,7 +187,20 @@ print("\n=== CHANNEL PREFERENCES FOR TOP 10% CUSTOMERS ===")
 print(channel_preferences.to_string(index=False))
 
 
-'''For top 10% of customers by sales, what is their average profit margin (to identify and target high-value customers for loyalty programs or special offers)'''
+'''$$$$For top 10% of customers by sales, what is their average profit margin (to identify and target high-value customers for loyalty programs or special offers)'''
+# Calculate total sales for top 10% customers 
+top_customer_loyalty = top_10_percent_customers
+top_customer_loyalty = top_customer_loyalty.merge(
+    customer_table[['CustomerKey', 'Name', 'Age']],  # Assuming 'Age' column exists
+    on='CustomerKey', 
+    how='left'
+)
+top_customer_loyalty = top_customer_loyalty[['CustomerKey', 'Name', 'Age', 'Total_Sales', 'Total_Orders']]
+top_customer_loyalty = top_customer_loyalty.sort_values('Total_Sales', ascending=False)
+print("\n===  TOP 10% CUSTOMERS FOR LOYALTY PROGRAMS ===")
+print(top_customer_loyalty.head(10).to_string(index=False))
+
+'''$$$$Comparison between top 10% Customer to others/ to determine whether ok or not to invest more towards them '''
 # Calculate average profit margin for top 10% customers
 avg_profit_margin_top = top_customers_transactions['ProfitMargin'].mean()
 print(f"\n=== AVERAGE PROFIT MARGIN FOR TOP 10% CUSTOMERS ===")
@@ -195,7 +211,7 @@ overall_avg_profit_margin = df['ProfitMargin'].mean()
 print(f"Overall Average Profit Margin of Top 10% of Customers : {overall_avg_profit_margin:.2f}%")
 print(f"Difference: {(avg_profit_margin_top - overall_avg_profit_margin):.2f}%")
 
-'''
+'''$$$$Top Categories by top 10% Customers'''
 # Analyze top product categories for top 10% customers
 top_categories = top_customers_transactions.groupby('Category').agg(
     Total_Sales=('SalesAmount', 'sum'),
@@ -207,8 +223,8 @@ top_categories['Sales_Percentage'] = (top_categories['Total_Sales'] / top_catego
 
 print("\n=== TOP PRODUCT CATEGORIES FOR TOP 10% CUSTOMERS ===")
 print(top_categories.head(5).to_string(index=False))
-'''
-'''
+
+'''$$$$Top Countries by top 10% Customers'''
 # Additional insights - Country distribution for top customers
 top_customer_countries = top_customers_transactions.groupby('Country_x').agg(
     Customer_Count=('CustomerKey', 'nunique'),
@@ -218,7 +234,7 @@ top_customer_countries = top_customer_countries.sort_values('Total_Sales', ascen
 
 print("\n=== GEOGRAPHIC DISTRIBUTION OF TOP 10% CUSTOMERS ===")
 print(top_customer_countries.head(5).to_string(index=False))
-'''
+
 
 
 
