@@ -51,7 +51,7 @@ merged_df = sales_table.merge(prod_table, on='ProductKey', how='left') \
 #Drop unwanted columns
 df = merged_df.drop(columns=['Order Number', 'Line Item', 'Delivery Date', 'Currency Code', 'Gender', 'Name','City','State Code',
                             'Zip Code','Continent','Birthday','Product Name','Color','SubcategoryKey','Subcategory', 'Open Date',
-                            'CustomerKey', 'ProductKey','State_y','Country_y','State_x','CategoryKey'])
+                            'ProductKey','State_y','Country_y','State_x','CategoryKey'])
 
 #Check the first 5 rows of the dataframe
 #print(df.head(10))
@@ -145,16 +145,88 @@ top_product_categories_by_sales_count = product_categories_profit_margin.sort_va
 
 '''What is the correlation between sales volume and profit margin across different product categories (to optimize inventory and marketing strategies)'''
 
-###Customer Analysis
+
+### Customer Analysis
 '''what type of customer typically would have a higher percentage of profit margin'''
+#Sort customer by their profit margin in descending order
 
 
 '''Top 10% of customer buy product from which channel (offline/online) (to optimize sales channels and marketing strategies)'''
+#Find top 10% customer by sales
+# Group by CustomerKey and calculate total sales per customer
+customer_sales = df.groupby('CustomerKey').agg(
+    Total_Sales=('SalesAmount', 'sum'),
+    Total_Orders=('Order Date', 'count')
+).reset_index()
+
+# Calculate 90th percentile
+sales_threshold = customer_sales['Total_Sales'].quantile(0.90)
+# Filter top 10% customers
+top_10_percent_customers = customer_sales[customer_sales['Total_Sales'] >= sales_threshold]
+print("\n=== TOP 10% CUSTOMERS BY SALES ===")
+print(f"Threshold: ${sales_threshold:,.2f}")
+print(f"Number of top customers: {len(top_10_percent_customers)}")
+
+#Determine channel preferences from top10% customer
+# Get all transactions for top 10% customers
+top_customers_transactions = df[df['CustomerKey'].isin(top_10_percent_customers['CustomerKey'])]
+# Analyze channel preferences (StoreKey=0 is Online, else Offline)
+channel_preferences = top_customers_transactions.groupby(
+    top_customers_transactions['StoreKey'].apply(lambda x: 'Online' if x == 0 else 'Offline')
+).agg(
+    Sales_Amount=('SalesAmount', 'sum'),
+    Transaction_Count=('Order Date', 'count'),
+    Customer_Count=('CustomerKey', 'nunique')
+).reset_index()
+channel_preferences.columns = ['Channel', 'Sales_Amount', 'Transaction_Count', 'Customer_Count']
+channel_preferences['Percentage_of_Sales'] = (channel_preferences['Sales_Amount'] / channel_preferences['Sales_Amount'].sum() * 100).round(2)
+print("\n=== CHANNEL PREFERENCES FOR TOP 10% CUSTOMERS ===")
+print(channel_preferences.to_string(index=False))
+
+
+'''For top 10% of customers by sales, what is their average profit margin (to identify and target high-value customers for loyalty programs or special offers)'''
+# Calculate average profit margin for top 10% customers
+avg_profit_margin_top = top_customers_transactions['ProfitMargin'].mean()
+print(f"\n=== AVERAGE PROFIT MARGIN FOR TOP 10% CUSTOMERS ===")
+print(f"Average Profit Margin: {avg_profit_margin_top:.2f}%")
+
+# Compare with overall average profit margin
+overall_avg_profit_margin = df['ProfitMargin'].mean()
+print(f"Overall Average Profit Margin of Top 10% of Customers : {overall_avg_profit_margin:.2f}%")
+print(f"Difference: {(avg_profit_margin_top - overall_avg_profit_margin):.2f}%")
+
+'''
+# Analyze top product categories for top 10% customers
+top_categories = top_customers_transactions.groupby('Category').agg(
+    Total_Sales=('SalesAmount', 'sum'),
+    Transaction_Count=('Order Date', 'count'),
+    Avg_Profit_Margin=('ProfitMargin', 'mean')
+).reset_index()
+top_categories = top_categories.sort_values('Total_Sales', ascending=False)
+top_categories['Sales_Percentage'] = (top_categories['Total_Sales'] / top_categories['Total_Sales'].sum() * 100).round(2)
+
+print("\n=== TOP PRODUCT CATEGORIES FOR TOP 10% CUSTOMERS ===")
+print(top_categories.head(5).to_string(index=False))
+'''
+'''
+# Additional insights - Country distribution for top customers
+top_customer_countries = top_customers_transactions.groupby('Country_x').agg(
+    Customer_Count=('CustomerKey', 'nunique'),
+    Total_Sales=('SalesAmount', 'sum')
+).reset_index()
+top_customer_countries = top_customer_countries.sort_values('Total_Sales', ascending=False)
+
+print("\n=== GEOGRAPHIC DISTRIBUTION OF TOP 10% CUSTOMERS ===")
+print(top_customer_countries.head(5).to_string(index=False))
+'''
+
+
+
 
 '''What seasonal trends exist in sales data (to target marketing campaigns)'''
-'''For top 10% of customers by sales, what is their average profit margin (to identify and target high-value customers for loyalty programs or special offers)'''
+
 '''for high profit margin products, what is the typical customer demographic (to tailor marketing strategies to the right audience)'''
-## Store Analysis
+### Store Analysis
 '''distribution of profit margin (by country and regions)'''
 '''Offline store that have highest sales per square ft (to determine best locations for new stores or expansion)'''
 '''Which country have many offiline sales vs online sales (to determine market preferences to expand into new regions)'''
