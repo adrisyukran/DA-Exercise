@@ -16,7 +16,7 @@ Checklist
 - [x] Visualize sales trends over time (monthly/quarterly)
 - [X(KIV)] Brand sales performance VS profit margin (to identify high-performing brands for partnerships or promotions or to invest more in them)
 - [x] Which product categories have high profit margins (to focus marketing and sales efforts on high-margin products)
-- [] What is the correlation between sales volume and profit margin across different product categories (to optimize inventory and marketing strategies)
+- [KIV] What is the correlation between sales volume and profit margin across different product categories (to optimize inventory and marketing strategies)
 ## Customer analysis for Marketing
 - [] what type of customer typically would have a higher percentage of profit margin
 - [] Top 10% of customer buy product from which channel (offline/online) (to optimize sales channels and marketing strategies)
@@ -33,9 +33,9 @@ Checklist
 '''
 
 #Import necessary libraries
-import pandas as pd # type: ignore
-import numpy as np # type: ignore
-import matplotlib.pyplot as plt # type: ignore
+import pandas as pd 
+import numpy as np 
+import matplotlib.pyplot as plt 
 
 #Import csv
 sales_table =pd.read_csv('Sales.csv',low_memory=False)
@@ -144,3 +144,19 @@ top_product_categories_by_sales_count = product_categories_profit_margin.sort_va
 #print(top_product_categories_by_sales_count.head(5))
 
 '''What is the correlation between sales volume and profit margin across different product categories (to optimize inventory and marketing strategies)'''
+
+###Customer Analysis
+'''what type of customer typically would have a higher percentage of profit margin'''
+
+
+'''Top 10% of customer buy product from which channel (offline/online) (to optimize sales channels and marketing strategies)'''
+
+'''What seasonal trends exist in sales data (to target marketing campaigns)'''
+'''For top 10% of customers by sales, what is their average profit margin (to identify and target high-value customers for loyalty programs or special offers)'''
+'''for high profit margin products, what is the typical customer demographic (to tailor marketing strategies to the right audience)'''
+## Store Analysis
+'''distribution of profit margin (by country and regions)'''
+'''Offline store that have highest sales per square ft (to determine best locations for new stores or expansion)'''
+'''Which country have many offiline sales vs online sales (to determine market preferences to expand into new regions)'''
+'''For top top 5 stores by sales, what is their average profit margin (to identify successful store strategies that can be replicated elsewhere)'''
+'''For top 5 stores by profit margin, which categories contribute most to their profit and their square ft (to focus on inventory and distribution strategies)'''
